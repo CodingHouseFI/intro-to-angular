@@ -8,66 +8,74 @@
   <link rel="stylesheet" href="style.css">
 
   <script src="/bower_components/angular/angular.js"></script>
-  <script src="main.js"></script>
+  <script src="/bower_components/ngstorage/ngStorage.js"></script>
+
+  <script src="/js/module.js"></script>
+  <script src="/js/controllers.js"></script>
+  <script src="/js/services.js"></script>
+
 </head>
 <body ng-app='myApp' ng-controller='mainCtrl'>
 
+
+  <pre>{{person | json}}</pre>
+
   <div class="container">
     
-    <h1 class="text-center">Contact List</h1>
+    <h1 class="text-center">Banking App</h1>
 
-    <input type="number" ng-model='money'>
-
-    <p>Money: {{money}}</p>
-    <p>Money: {{money | currency : '€' : 4}}</p>
-
-
-    <form ng-submit='addContact(newContact)'>
+    <form ng-submit='addTransaction()'>
 
       <div class="form-group">
-        <label>Name:</label>
-        <input type="text" class="form-control" placeholder="Name" ng-model='newContact.name' required>
+        <label>Description:</label>
+        <input type="text" class="form-control" placeholder="Description" ng-model='newTransaction.desc' required>
       </div>
       <div class="form-group">
-        <label>Email:</label>
-        <input type="email" class="form-control" placeholder="Email" ng-model='newContact.email' required>
+        <label>Value:</label>
+        <input type="number" class="form-control" placeholder="Value" ng-model='newTransaction.value' required min=0>
       </div>
-      <div class="form-group">
-        <label>Phone:</label>
-        <input type="text" class="form-control" placeholder="Phone" ng-model='newContact.phone' required>
-      </div>
+      <label>
+        <input type="radio" ng-model='newTransaction.type' ng-value="'credit'" ng-required='!newTransaction.type'>
+        Credit
+      </label>
+      <label>
+        <input type="radio" ng-model='newTransaction.type' value="debit" ng-required='!newTransaction.type'>
+        Debit        
+      </label>
 
       <button class="btn btn-default">Submit</button>
     </form>
 
-    <pre>{{newContact | json}}</pre>
+    
+    <h3>Balance: {{ balance | currency}}</h3>
 
 
-    <ng-pluralize count="contacts.length"
-              when="{'0': 'You have no contacts.',
-                     '1': 'You have 1 contact.',
-                     'other': 'You have {{contacts.length}} contacts.'}">
-    </ng-pluralize>
-
-    <table class="table" ng-show='contacts.length'>
+    <table class="table" ng-show='storage.transactions.length'>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Delete?</th>
+          <th>Desc</th>
+          <th>Credits</th>
+          <th>Debits</th>
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat='contact in contacts track by $index'>
-          <td>{{contact.name | uppercase}}</td>
-          <td>{{contact.email}}</td>
-          <td>{{contact.phone}}</td>
+        <tr ng-repeat='transaction in storage.transactions track by $index'>
+          <td>{{transaction.desc}}</td>
           <td>
-            <button class="btn btn-danger" ng-click='removeContact($index)'>X</button>
+            <span ng-show='transaction.type === "credit"'>{{transaction.value | currency}}</span>
           </td>
-        </tr>        
+          <td>
+            <span ng-show='transaction.type === "debit"'>{{transaction.value | currency}}</span>
+          </td>
+        </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <td>TOTALS:</td>
+          <td>{{totalCredit | currency}}</td>
+          <td>{{totalDebit | currency}}</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 

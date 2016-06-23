@@ -1,12 +1,17 @@
 'use strict';
 
-angular.module('myApp', ['ngStorage']);
-// with array - new module declaration
+angular.module('myApp')
+.controller('mainCtrl', function($scope, $localStorage, Swapi) {
 
-let app = angular.module('myApp');
-// without array - reference to pre-existing module
+  Swapi.getPerson(5)  
+    .then(res => {
+      console.log('res.data:', res.data);
+      $scope.person = res.data;
+    })
+    .catch(err => {
+      console.log('err:', err);
+    });
 
-app.controller('mainCtrl', function($scope, $localStorage) {
 
   $scope.storage = $localStorage.$default({
     transactions: []
@@ -38,5 +43,5 @@ app.controller('mainCtrl', function($scope, $localStorage) {
     $scope.totalCredit = totalCredit;
     $scope.totalDebit = totalDebit;
   });
-
 });
+
