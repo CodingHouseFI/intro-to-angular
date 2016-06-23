@@ -3,15 +3,11 @@
 angular.module('myApp')
 .controller('mainCtrl', function($scope, $localStorage, Swapi) {
 
-  Swapi.getPerson(5)  
-    .then(res => {
-      console.log('res.data:', res.data);
-      $scope.person = res.data;
+  Swapi.getPerson(5)
+    .then(person => {
+      console.log('person:', person);
+      $scope.person = person;
     })
-    .catch(err => {
-      console.log('err:', err);
-    });
-
 
   $scope.storage = $localStorage.$default({
     transactions: []
